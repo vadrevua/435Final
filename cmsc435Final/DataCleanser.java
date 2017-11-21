@@ -11,7 +11,7 @@ public class DataCleanser {
 
 	private static final String COMMA_DELIMITER = ",";
 	static String[][] dataSet = new String[3588][941];
-	static String[][] cDataSet = new String[3588][941];
+	static String[][] cDataSet; //= new String[3588][941];
 	static int[] values = new int[941];
 	public static void loadFile(){
 		for(int a = 0; a <values.length; a++){
@@ -47,26 +47,54 @@ public class DataCleanser {
 		}		
 	}
 
-	public static void cleanse(){
+	public static void cleanse(int minimumCount){
 
-		//if the column has more than 2000 0's then we want to remove the column and update the file/array
-		int cleansedArrayCounter = 0;
+		//if the column has more than minimumCount amount of 0's then we want to remove the column and update the file/array
+		int nextDeletedColumn = 0;
 		int counter = 0;
 		for(int y = 0; y<941;y++){
+			counter = 0;
 			for(int x =0; x<3588; x++){
 				if(dataSet[x][y].equals("0")){
 				counter++;	
 				}
-				if(counter<2000){
-					cDataSet[x][y] = dataSet[x][y];
+				if(counter>minimumCount){
+					break;
 				}
-				else
-				values[y] = cleansedArrayCounter;
-				
 			}
-			counter = 0;
-			cleansedArrayCounter++;
+			
+			if(counter<minimumCount) {
+				values[nextDeletedColumn] = y;
+				nextDeletedColumn++;
+			}
+			
+			//counter = 0;
+			//cleansedArrayCounter++;
 		}
+		
+		cDataSet = new String[3588][nextDeletedColumn];
+		
+		for(int x = 0; x<3588;y++){
+			for(int y = 0; y<941; x++){
+				boolean set = false;
+				int badColumns = 0;
+				for(deletedColumn:values) {
+					if(y>deletedColumn) {
+						set = true;
+						break;
+					}
+					if(y = deletedColumn) {
+						badColumns++;
+						break;
+					}
+				}
+				if(set) {
+					cDataSet[x][y-badColumns] = dataSet[x][y];
+				}
+			}
+
+		}
+		
 	}
 
 
