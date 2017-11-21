@@ -23,9 +23,9 @@ public class DataCleanser {
 		int counter = 0;
 		try
 		{
-			br = new BufferedReader(new FileReader("D:/Downloads/training(2).csv"));
+			br = new BufferedReader(new FileReader("C:/Users/Aditya/Desktop/Fall 17/435/Final Proj/training(2).csv"));
 
-			while ((line = br.readLine()) != null) 
+			while ((line = br.readLine()) != null)
 			{
 				dataSet[counter] = line.split(COMMA_DELIMITER);
 				//System.out.println(counter);
@@ -44,7 +44,7 @@ public class DataCleanser {
 				System.out.println("Error occured while closing the BufferedReader");
 				ie.printStackTrace();
 			}
-		}		
+		}
 	}
 
 	public static void cleanse(int minimumCount){
@@ -56,45 +56,64 @@ public class DataCleanser {
 			counter = 0;
 			for(int x =0; x<3588; x++){
 				if(dataSet[x][y].equals("0")){
-				counter++;	
+				counter++;
 				}
 				if(counter>minimumCount){
 					break;
 				}
 			}
-			
+
 			if(counter<minimumCount) {
 				values[nextDeletedColumn] = y;
+				//System.out.println(values[nextDeletedColumn]);
 				nextDeletedColumn++;
 			}
-			
+
 			//counter = 0;
 			//cleansedArrayCounter++;
 		}
-		
-		cDataSet = new String[3588][nextDeletedColumn];
-		
-		for(int x = 0; x<3588;y++){
-			for(int y = 0; y<941; x++){
+
+		nextDeletedColumn--;
+
+		cDataSet = new String[3588][941 - nextDeletedColumn];
+
+		for(int x = 0; x<3588;x++){
+			for(int y = 0; y<941; y++){
 				boolean set = false;
 				int badColumns = 0;
-				for(deletedColumn:values) {
+
+				// delete this
+				for(int deletedColumn:values) {
+					/*
+					 * This weird part won't allow for the for loop that I wrote
+					 * see if you can tell the problem.
+					 * values has the deletedcolumns
+					 * but deletedcolumns continues to be 0
+					 * so the enhanced for loop isn't working.
+					 * I fixed the other problems and now the main thing is correctly writing to the
+					 * file.
+					 */
+					System.out.println(deletedColumn);
 					if(y>deletedColumn) {
 						set = true;
 						break;
 					}
-					if(y = deletedColumn) {
+					if(y == deletedColumn) {
 						badColumns++;
+						//System.out.println(badColumns);
 						break;
+
 					}
 				}
+				//this , values to arraylist
 				if(set) {
 					cDataSet[x][y-badColumns] = dataSet[x][y];
+					//System.out.println(badColumns);
 				}
 			}
 
 		}
-		
+
 	}
 
 
@@ -102,7 +121,7 @@ public class DataCleanser {
 		BufferedWriter bufferedWriter = null;
 		try {
 
-			File file = new File("C:/Users/Adi/Desktop/Fall 2017/435/Final Proj/cleansedData.csv");
+			File file = new File("C:/Users/Aditya/Desktop/Fall 17/435/Final Proj/cleansedData.csv");
 			if(!file.exists()){
 				file.createNewFile();
 			}
@@ -111,7 +130,7 @@ public class DataCleanser {
 			bufferedWriter = new BufferedWriter(fileWriter);
 			for(int x =0; x<2500; x++){
 				for(int y = 0; y<941;y++){
-					
+
 					bufferedWriter.write(cDataSet[x][y]);
 					bufferedWriter.write(",");
 				}
@@ -134,7 +153,7 @@ public class DataCleanser {
 
 	public static void main(String[] args) {
 		loadFile();
-		cleanse();
+		cleanse(2000);
 		writeFile();
 	}
 
